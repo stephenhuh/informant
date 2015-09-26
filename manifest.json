@@ -1,5 +1,17 @@
 {
 	"name": "Informant",
+	"description": "Quick Intercom answers with a click.",
 	"version": "1.0",
-	"description": "Quick Intercom answers with a click."
+	"content_scripts": [
+		{
+			"matches": [
+				"http://*/*",
+				"https://*/*"
+			],
+			"js": [
+				"background.js"	
+			]
+		}
+	],
+	"manifest_version": 2
 }
