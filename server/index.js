@@ -12,6 +12,15 @@ app.set('view engine', 'ejs');
 
 app.use(express.static(__dirname + '/public'));
 
+fs.watchFile('./public/screenshot.jpeg', function(curr, prev) {
+  console.log('the current mtime is: ' + curr.mtime);
+  console.log('the previous mtime was: ' + prev.mtime);
+  setTimeout(function() {
+    exec('screencapture -R106,157,640,360 ./public/screenshot.jpeg', function (error, stdout, stderr){
+    });
+  }, 2000);
+});
+
 app.get('/', function(req, res) {
   // capture youtube screen
   exec('screencapture -R106,157,640,360 ./public/screenshot.jpeg', function (error, stdout, stderr){
