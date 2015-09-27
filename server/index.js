@@ -11,6 +11,7 @@ var wit = require('node-wit');
 var _ = require('lodash');
 var ACCESS_TOKEN = "JJ6C6JDV5B65NDEVVXDJIOLE5AC5SUOX";
 var VIDEO_URL = "https://www.youtube.com/watch?v=FRKVQcbIByo";
+var WIT_LIMIT = 500;
 
 app.set('view engine', 'ejs');
 
@@ -82,16 +83,19 @@ app.post('/image', function(req, res) {
   req.pipe(destination);
 });
 
+var infoQueue = [];
+
 var analyze = function() {
   console.log("queuing up to wit");
   glob('myaudio_*.mp3', function(err, files) {
     _.each(files, function(val, key) {
-      if (key > 0) { return;}
+      if (key > WIT_LIMIT - 1) { return;}
       var source = fs.createReadStream('./'+val);
       wit.captureSpeechIntent(ACCESS_TOKEN, source, "audio/mpeg3", function (err, res) {
           console.log("Response from Wit for audio stream: ");
           if (err) console.log("Error: ", err);
           console.log(JSON.stringify(res, null, " "));
+          infoQueue.push(JSON.stringifiy(res, null, " "));
       });
     });
   });
@@ -105,11 +109,12 @@ var slice = function(err){
 
 var convert = function(){
 	console.log('yo youre converting a video right now');
-	exec('ffmpeg -y -i myvideo.m4a -acodec libmp3lame -ab 128k myaudio.mp3', null, slice);
+	exec('ffmpeg -ss 0 -t 150 -y -i myvideo.m4a -acodec libmp3lame -ab 128k myaudio.mp3', null, slice);
 };
 
 app.get('/dl', function(req, res) {
-  exec('youtube-dl -f bestaudio -o myvideo.m4a '+VIDEO_URL, null, convert);
+  console.log('youtube-dl -f bestaudio -o myvideo.m4a '+VIDEO_URL);
+  exec('rm myvideo.m4a || true; youtube-dl -f bestaudio -o myvideo.m4a '+VIDEO_URL, null, convert);
 	// var video = youtubedl('https://www.youtube.com/watch?v=DSjgIM6j788',
   // // Optional arguments passed to youtube-dl.
 	// ['--format=18'],
@@ -128,23 +133,11 @@ app.get('/dl', function(req, res) {
 	// res.send('yo youre downloading a video right now');
 });
 
-
-
-
-
-var analyzeQueue = [];
-var infoQueue = [];
-
-app.get('/analyze', function(req, res){
-	wit.captureSpeechIntent(ACCESS_TOKEN, stream, "audio/mpeg3", function (err, res) {
-	  console.log("Response from Wit for audio stream: ");
-	  if (err) console.log("Error: ", err);
-	  console.log(JSON.stringify(res, null, " "));
-	});
-	res.send('yo youre sending your shit now');
+app.get('/informant', function(req, res){
+  if (!_.isEmpty(infoQueue)) {
+    res.send(infoQueue.pop());
+  }
 });
-
-app.get('/informant', function(req, rest){});
 
 server.listen(1337, function() {
   console.log('Server is running on port 1337');
