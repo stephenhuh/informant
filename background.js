@@ -30,7 +30,7 @@
           .error(function(resp){
             port.postMessage(resp);
           })
-        }, 10000);
+        }, 2000);
       };
       if (msg.action == 'unpoll') {
         unPoll();
