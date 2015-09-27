@@ -38,18 +38,18 @@ app.post('/image', function(req, res) {
 
 var detectFace = function(){
 	request({
-		url: "https://api.projectoxford.ai/face/v0/detections"
+		url: "https://api.projectoxford.ai/face/v0/detections",
 		qs: {
 			analyzesFaceLandmarks : "true",
 			analyzesAge : "true",
 			analyzesGender : "true",
 			analyzesHeadPose: "true"
-		}
+		},
 		method: "POST",
 		headers: {
-			"Content-Type" : "application/json"
+			"Content-Type" : "application/json",
 			"Ocp-Apim-Subscription-Key"	: "0067f293c7b6446db4bde094604c4426",
-		}
+		},
 		body: {
 			"url":"http://www.nndb.com/people/397/000022331/conan-obrien-1-sized.jpg" 
 		}
