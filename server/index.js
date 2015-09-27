@@ -82,18 +82,18 @@ app.post('/image', function(req, res) {
 
 app.get('/dl', function(req, res) {
 	var video = youtubedl('http://www.youtube.com/watch?v=90AiXO1pAiA',
-	  // Optional arguments passed to youtube-dl. 
+	  // Optional arguments passed to youtube-dl.
 	  ['--format=18'],
-	  // Additional options can be given for calling `child_process.execFile()`. 
+	  // Additional options can be given for calling `child_process.execFile()`.
 	  { cwd: __dirname });
-	 
-	// Will be called when the download starts. 
+
+	// Will be called when the download starts.
 	video.on('info', function(info) {
 	  console.log('Download started');
 	  console.log('filename: ' + info.filename);
 	  console.log('size: ' + info.size);
 	});
-	 
+
 	video.pipe(fs.createWriteStream('myvideo.mp4'));
 	console.log('finished');
 	res.send('yo youre downloading a video right now');
@@ -105,16 +105,15 @@ app.get('/convert', function(req, res){
 });
 
 app.get('/slice', function(req, res){
-	exec('')	
+	exec('')
 
 });
 
-app.analyze('/analyze', function(req, res){
-	
+app.get('/analyze', function(req, res){
+
 
 });
 
 server.listen(1337, function() {
   console.log('Server is running on port 1337');
 });
-

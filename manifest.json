@@ -20,7 +20,7 @@
 				"https://www.youtube.com/*"
 			],
 			"css": [
-				"./custom.css"
+				"custom.css", "bootstrap-theme.min.css"
 			],
 			"js": [
 				"lodash.min.js",
