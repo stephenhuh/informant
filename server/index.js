@@ -55,7 +55,6 @@ var detectFaceParams = function(payload, content) {
 app.get('/', function(req, res) {
   var source = fs.createReadStream('./public/screenshot.jpeg');
   var params = detectFaceParams('', 'application/octet-stream');
-  // source.pipe(request.post('http://localhost:1337/image')); //oxford req
   var cb = function(error, response, body) {
     console.log("got data from project oxford");
     console.log(body);
@@ -68,6 +67,8 @@ app.get('/', function(req, res) {
     // });
   };
   console.log("POSTING to project oxford");
+  // var dummyData = fs.createReadStream('./apiDataMinimal.json');
+  // dummyData.pipe(res);
   source.pipe(request.post(params.options, cb));
   // res.render('index.ejs');
 });

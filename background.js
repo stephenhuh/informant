@@ -16,7 +16,7 @@
       if (msg.action == "detect") {
         $.get('http://localhost:1337')
         .success(function(resp){
-          port.postMessage(resp);
+          port.postMessage({success: resp});
         })
         .error(function(resp){
           port.postMessage(resp);
