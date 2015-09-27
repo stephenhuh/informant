@@ -161,6 +161,9 @@
       });
       // VIDEO_CONTAINER.prepend(OVERLAY);
     }
+    else if (msg.info){
+      // ANIMATION LOGIC
+    }
     else {
       console.log(msg);
     }
