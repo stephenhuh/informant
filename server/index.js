@@ -98,7 +98,22 @@ app.get('/dl', function(req, res) {
 	res.send('yo youre downloading a video right now');
 });
 
+app.get('/convert', function(req, res){
+	exec('ffmpeg -i myvideo.mp4 myaudio.mp3');
+	res.send('yo youre converting a video right now');
+});
+
+app.get('/slice', function(req, res){
+	exec('')	
+
+});
+
+app.analyze('/analyze', function(req, res){
+	
+
+});
 
 server.listen(1337, function() {
   console.log('Server is running on port 1337');
 });
+
