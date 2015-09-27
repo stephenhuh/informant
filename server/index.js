@@ -15,19 +15,49 @@ app.use(express.static(__dirname + '/public'));
 fs.watchFile('./public/screenshot.jpeg', function(curr, prev) {
   console.log('the current mtime is: ' + curr.mtime);
   console.log('the previous mtime was: ' + prev.mtime);
-  setTimeout(function() {
-    exec('screencapture -R106,157,640,360 ./public/screenshot.jpeg', function (error, stdout, stderr){
-    });
-  }, 2000);
+  // setTimeout(function() {
+  //   exec('screencapture -R106,157,640,360 ./public/screenshot.jpeg', function (error, stdout, stderr){
+  //   });
+  // }, 2000);
 });
+
+var detectFaceParams = function(payload, content) {
+  return {
+    options : {
+  		uri: "/detections",
+      baseUrl: "https://api.projectoxford.ai/face/v0/",
+  		qs: {
+  			analyzesFaceLandmarks : "false",
+  			analyzesAge : "false",
+  			analyzesGender : "false",
+  			analyzesHeadPose: "false"
+  		},
+  		method: "POST",
+  		headers: {
+  			"Content-Type" : content,
+  			"Ocp-Apim-Subscription-Key"	: "0067f293c7b6446db4bde094604c4426",
+  		},
+  		body: payload
+  	},
+    callback : function(error, response, body){
+      if (error) {
+        console.log(error.message);
+        return;
+      }
+      console.log("got data from Project Oxford");
+      // fs.createWriteStream('apiData.json').write(JSON.stringify(body, null, 2));
+  	}
+  }
+}
 
 app.get('/', function(req, res) {
   // capture youtube screen
   exec('screencapture -R106,157,640,360 ./public/screenshot.jpeg', function (error, stdout, stderr){
   });
-  detectFace();
-  source = fs.createReadStream('./public/screenshot.jpeg');
-  source.pipe(request.post('http://localhost:1337/image')); //oxford req
+  source = fs.createReadStream('./test.png');
+  var params = detectFaceParams('', 'application/octet-stream');
+  // source.pipe(request.post('http://localhost:1337/image')); //oxford req
+  source.pipe(request.post(params.options, params.callback));
   res.render('index.ejs');
 });
 
@@ -36,27 +66,6 @@ app.post('/image', function(req, res) {
   req.pipe(destination);
 });
 
-var detectFace = function(){
-	request({
-		url: "https://api.projectoxford.ai/face/v0/detections",
-		qs: {
-			analyzesFaceLandmarks : "true",
-			analyzesAge : "true",
-			analyzesGender : "true",
-			analyzesHeadPose: "true"
-		},
-		method: "POST",
-		headers: {
-			"Content-Type" : "application/json",
-			"Ocp-Apim-Subscription-Key"	: "0067f293c7b6446db4bde094604c4426",
-		},
-		body: {
-			"url":"http://www.nndb.com/people/397/000022331/conan-obrien-1-sized.jpg" 
-		}
-	}, function(response){
-		console.log(response);
-	})
-}
 
 server.listen(1337, function() {
   console.log('Server is running on port 1337');

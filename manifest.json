@@ -5,11 +5,11 @@
 	"content_scripts": [
 		{
 			"matches": [
-				"http://*/*",
-				"https://*/*"
+				"http://*.youtube.*/*",
+				"https://*.youtube.*/*"
 			],
 			"js": [
-				"background.js"	
+				"background.js"
 			]
 		}
 	],

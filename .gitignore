@@ -29,3 +29,5 @@ build/Release
 
 **/notes.md
 **/*.jpeg
+**/*.png
+**/*.json
