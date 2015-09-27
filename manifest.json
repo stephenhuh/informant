@@ -7,6 +7,7 @@
 	],
 	"background": {
     "scripts": [
+			"lodash.min.js",
 			"jquery-2.1.4.min.js",
 			"background.js"
 		],
@@ -22,6 +23,7 @@
 				"./custom.css"
 			],
 			"js": [
+				"lodash.min.js",
 				"jquery-2.1.4.min.js",
 				"content.js"
 			]

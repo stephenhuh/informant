@@ -7,6 +7,8 @@ var io = require('socket.io')(server);
 var request = require('request');
 //Load fs module
 var fs = require('fs');
+var youtubedl = require('youtube-dl');
+
 
 app.set('view engine', 'ejs');
 
@@ -55,7 +57,6 @@ var detectFaceParams = function(payload, content) {
 app.get('/', function(req, res) {
   var source = fs.createReadStream('./public/screenshot.jpeg');
   var params = detectFaceParams('', 'application/octet-stream');
-  // source.pipe(request.post('http://localhost:1337/image')); //oxford req
   var cb = function(error, response, body) {
     console.log("got data from project oxford");
     console.log(body);
@@ -68,6 +69,8 @@ app.get('/', function(req, res) {
     // });
   };
   console.log("POSTING to project oxford");
+  // var dummyData = fs.createReadStream('./apiDataMinimal.json');
+  // dummyData.pipe(res);
   source.pipe(request.post(params.options, cb));
   // res.render('index.ejs');
 });
@@ -77,7 +80,41 @@ app.post('/image', function(req, res) {
   req.pipe(destination);
 });
 
+app.get('/dl', function(req, res) {
+	var video = youtubedl('http://www.youtube.com/watch?v=90AiXO1pAiA',
+	  // Optional arguments passed to youtube-dl. 
+	  ['--format=18'],
+	  // Additional options can be given for calling `child_process.execFile()`. 
+	  { cwd: __dirname });
+	 
+	// Will be called when the download starts. 
+	video.on('info', function(info) {
+	  console.log('Download started');
+	  console.log('filename: ' + info.filename);
+	  console.log('size: ' + info.size);
+	});
+	 
+	video.pipe(fs.createWriteStream('myvideo.mp4'));
+	console.log('finished');
+	res.send('yo youre downloading a video right now');
+});
+
+app.get('/convert', function(req, res){
+	exec('ffmpeg -i myvideo.mp4 myaudio.mp3');
+	res.send('yo youre converting a video right now');
+});
+
+app.get('/slice', function(req, res){
+	exec('')	
+
+});
+
+app.analyze('/analyze', function(req, res){
+	
+
+});
 
 server.listen(1337, function() {
   console.log('Server is running on port 1337');
 });
+
