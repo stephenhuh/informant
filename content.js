@@ -14,6 +14,17 @@
   OVERLAY.addClass('video-legacy-annotations html5-stop-propagation');
   ANNOTATIONS.prepend(OVERLAY);
 
+  var peopleListener = [];
+  var length;
+
+  var info = [];
+  function deregisterClickInfo() {
+    for (var i = 0; i < length; i++) {
+      info[index].el.removeEventListener(peopleListener[i]);
+      info[index].el.hide();
+      info[index].isHidden = true;
+    }
+  };
   function plotRectangle(el, rect) {
     var div = $(document.createElement('div'));
     div.addClass('annotation-shape annotation-type-highlight');
@@ -28,9 +39,29 @@
       border: '2px solid ' + (rect.color || 'magenta'),
       'z-index': 0,
     });
-    var svg = $(document.createElement('svg'));
-    // svg.
-    // document.body.appendChild(div);
+    var a = $(document.createElement('a'));
+    a.attr({
+      id: 'get-'+rect.class,
+      href: 'javascript:void(0)',
+    });
+    a.css({
+      width: rect.width + 'px',
+      height: rect.height + 'px',
+    });
+    div.prepend(a);
+    info[index] = {
+      el: a
+    };
+    peopleListener[index] = a.click(function() {
+      if (info[index].isHidden) {
+        info[index].isHidden = false;
+        info[index].el.show();
+      }
+      else {
+        info[index].isHidden = true;
+        info[index].el.hide();
+      }
+    });
     console.log(div);
     el.prepend(div);
     return div;
@@ -48,11 +79,13 @@
   port.postMessage({myProperty: "value"});
   port.onMessage.addListener(function(msg) {
     if (msg.success) {
+      deregisterClickInfo();
       $('.annotation-shape').remove();
       console.log("got data from oxford");
       var coor = JSON.parse(msg.success);
       coor = JSON.parse(coor);
       console.log(coor);
+      length = coor.length;
       _.each(coor, function(val, key) {
         if (_.isString(val)) {
           val = JSON.parse(val);
@@ -64,7 +97,8 @@
             top: val.faceRectangle.top.toString(),
             width: val.faceRectangle.width.toString(),
             height: val.faceRectangle.height.toString(),
-            class: "rectangle" + key.toString()
+            class: "rectangle" + key.toString(),
+            index: key
           }
           console.log(rect);
           plotRectangle(OVERLAY, rect);
