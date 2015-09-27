@@ -62,7 +62,6 @@ var detectFaceParams = function(payload, content) {
 app.get('/', function(req, res) {
   var source = fs.createReadStream('./public/screenshot.jpeg');
   var params = detectFaceParams('', 'application/octet-stream');
-  // source.pipe(request.post('http://localhost:1337/image')); //oxford req
   var cb = function(error, response, body) {
     console.log("got data from project oxford");
     console.log(body);
@@ -75,6 +74,8 @@ app.get('/', function(req, res) {
     // });
   };
   console.log("POSTING to project oxford");
+  // var dummyData = fs.createReadStream('./apiDataMinimal.json');
+  // dummyData.pipe(res);
   source.pipe(request.post(params.options, cb));
   // res.render('index.ejs');
 });
@@ -87,11 +88,11 @@ app.post('/image', function(req, res) {
 app.get('/dl', function(req, res) {
 	var video = youtubedl('https://www.youtube.com/watch?v=DSjgIM6j788',
 	  // Optional arguments passed to youtube-dl. 
-	  ['--format=18'],
-	  // Additional options can be given for calling `child_process.execFile()`. 
+	['--format=18'],
+	  // Additional options can be given for calling `child_process.execFile()`.
 	  { cwd: __dirname });
-	 
-	// Will be called when the download starts. 
+
+	// Will be called when the download starts.
 	video.on('info', function(info) {
 	  console.log('Download started');
 	  console.log('filename: ' + info.filename);
@@ -100,7 +101,6 @@ app.get('/dl', function(req, res) {
 	ws = fs.createWriteStream('myvideo.mp4')
 	video.pipe(ws);
 	ws.on("finish", convert());
-	console.log('finished');
 	res.send('yo youre downloading a video right now');
 });
 
@@ -114,6 +114,9 @@ var slice = function(){
 	exec('mp3splt -t 0.05 output', null,);
 }
 
+app.get('/slice', function(req, res){
+	exec('')
+}
 
 app.get('/analyze', function(req, res){
 	wit.captureSpeechIntent(ACCESS_TOKEN, stream, "audio/mpeg3", function (err, res) {
@@ -124,11 +127,8 @@ app.get('/analyze', function(req, res){
 	res.send('yo youre sending your shit now');
 });
 
-app.get('/informant', function(req, rest){
+app.get('/informant', function(req, rest){});
 	
-});
-
 server.listen(1337, function() {
   console.log('Server is running on port 1337');
 });
-
