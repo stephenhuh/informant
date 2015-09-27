@@ -1,5 +1,6 @@
 (function(window, $, _){
   $('.video-annotations').remove();
+  var polling = false;
   BODY_CONTAINER = $('#body-container');
   PAGE_CONTAINER = $('#page-container');
   VIDEO_CONTENT = $('.html5-video-content');
@@ -37,14 +38,17 @@
 
   console.log(VIDEO_CONTAINER);
   BODY_CONTAINER.prepend('<div class="plug"><a id="get-screenshot" href="javascript:void(0);" style="position:absolute;top:50px;right:500px;" class=""><span class="">Get ScreenShot</span></a></div>');
+  BODY_CONTAINER.prepend('<div class="plug"><a id="continumm" href="javascript:void(0);" style="position:absolute;top:50px;right:700px;" class=""><span class="">Continumm</span></a></div>');
 
   GET_SCREENSHOT = $('#get-screenshot');
+  CONTINUMM = $('#continumm');
 
   console.log("connecting to background");
   var port = chrome.runtime.connect({name: "my-channel"});
   port.postMessage({myProperty: "value"});
   port.onMessage.addListener(function(msg) {
     if (msg.success) {
+      $('.annotation-shape').remove();
       console.log("got data from oxford");
       var coor = JSON.parse(msg.success);
       coor = JSON.parse(coor);
@@ -73,7 +77,18 @@
     }
   });
   GET_SCREENSHOT.click(function(){
-    $('.annotation-shape').remove();
     port.postMessage({action: "detect"});
   });
+  CONTINUMM.click(function() {
+    if (polling) {
+      polling = false;
+      console.log("unpolling");
+      port.postMessage({action: 'unpoll'});
+    }
+    else {
+      console.log("polling");
+      polling = true;
+      port.postMessage({action: 'poll'});
+    }
+  })
 })(window, jQuery, _);
