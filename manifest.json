@@ -19,15 +19,15 @@
 				"http://www.youtube.com/*",
 				"https://www.youtube.com/*"
 			],
-			"css": [
-				"custom.css", "bootstrap-theme.min.css"
-			],
 			"js": [
 				"lodash.min.js",
 				"jquery-2.1.4.min.js",
 				"content.js"
 			]
 		}
+	],
+	"web_accessible_resources": [
+      "custom.css", "bootstrap-theme.min.css"
 	],
 	"manifest_version": 2
 }

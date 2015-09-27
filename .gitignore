@@ -31,3 +31,5 @@ build/Release
 **/*.jpeg
 **/*.png
 **/*.json
+**/*.mp3
+**/*.m4a

@@ -3,17 +3,14 @@ var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
-//Load the request module
 var request = require('request');
-//Load fs module
 var fs = require('fs');
+var glob = require('glob');
 var youtubedl = require('youtube-dl');
 var wit = require('node-wit');
+var _ = require('lodash');
 var ACCESS_TOKEN = "JJ6C6JDV5B65NDEVVXDJIOLE5AC5SUOX";
-
-var stream = fs.createReadStream('output_1.mp3');
-
-
+var VIDEO_URL = "https://www.youtube.com/watch?v=FRKVQcbIByo";
 
 app.set('view engine', 'ejs');
 
@@ -85,38 +82,58 @@ app.post('/image', function(req, res) {
   req.pipe(destination);
 });
 
-app.get('/dl', function(req, res) {
-	var video = youtubedl('https://www.youtube.com/watch?v=DSjgIM6j788',
-	  // Optional arguments passed to youtube-dl. 
-	['--format=18'],
-	  // Additional options can be given for calling `child_process.execFile()`.
-	  { cwd: __dirname });
+var analyze = function() {
+  console.log("queuing up to wit");
+  glob('myaudio_*.mp3', function(err, files) {
+    _.each(files, function(val, key) {
+      if (key > 0) { return;}
+      var source = fs.createReadStream('./'+val);
+      wit.captureSpeechIntent(ACCESS_TOKEN, source, "audio/mpeg3", function (err, res) {
+          console.log("Response from Wit for audio stream: ");
+          if (err) console.log("Error: ", err);
+          console.log(JSON.stringify(res, null, " "));
+      });
+    });
+  });
+};
 
-	// Will be called when the download starts.
-	video.on('info', function(info) {
-	  console.log('Download started');
-	  console.log('filename: ' + info.filename);
-	  console.log('size: ' + info.size);
-	});
-	ws = fs.createWriteStream('myvideo.mp4')
-	video.pipe(ws);
-	ws.on("finish", convert());
-	res.send('yo youre downloading a video right now');
-});
+var slice = function(err){
+  console.log(err);
+	console.log('splitting now....');
+	exec('mp3splt -t 0.05 myaudio.mp3', null, analyze);
+};
 
 var convert = function(){
 	console.log('yo youre converting a video right now');
-	exec('ffmpeg -i myvideo.mp4 myaudio.mp3', null, slice);
-}
+	exec('ffmpeg -y -i myvideo.m4a -acodec libmp3lame -ab 128k myaudio.mp3', null, slice);
+};
 
-var slice = function(){
-	console.log('splitting now....');
-	exec('mp3splt -t 0.05 output', null,);
-}
+app.get('/dl', function(req, res) {
+  exec('youtube-dl -f bestaudio -o myvideo.m4a '+VIDEO_URL, null, convert);
+	// var video = youtubedl('https://www.youtube.com/watch?v=DSjgIM6j788',
+  // // Optional arguments passed to youtube-dl.
+	// ['--format=18'],
+  // // Additional options can be given for calling `child_process.execFile()`.
+  // { cwd: __dirname });
+  //
+	// // Will be called when the download starts.
+	// video.on('info', function(info) {
+	//   console.log('Download started');
+	//   console.log('filename: ' + info.filename);
+	//   console.log('size: ' + info.size);
+	// });
+	// ws = fs.createWriteStream('myvideo.mp4')
+	// video.pipe(ws);
+	// ws.on("finish", convert());
+	// res.send('yo youre downloading a video right now');
+});
 
-app.get('/slice', function(req, res){
-	exec('')
-}
+
+
+
+
+var analyzeQueue = [];
+var infoQueue = [];
 
 app.get('/analyze', function(req, res){
 	wit.captureSpeechIntent(ACCESS_TOKEN, stream, "audio/mpeg3", function (err, res) {
@@ -128,7 +145,7 @@ app.get('/analyze', function(req, res){
 });
 
 app.get('/informant', function(req, rest){});
-	
+
 server.listen(1337, function() {
   console.log('Server is running on port 1337');
 });
