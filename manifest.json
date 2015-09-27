@@ -2,14 +2,25 @@
 	"name": "Informant",
 	"description": "Quick Intercom answers with a click.",
 	"version": "1.0",
+	"permissions": [
+		"http://localhost:1337/*"
+	],
+	"background": {
+    "scripts": [
+			"jquery-2.1.4.min.js",
+			"background.js"
+		],
+    "persistent": false
+	},
 	"content_scripts": [
 		{
 			"matches": [
-				"http://*.youtube.*/*",
-				"https://*.youtube.*/*"
+				"http://www.youtube.com/*",
+				"https://www.youtube.com/*"
 			],
 			"js": [
-				"background.js"
+				"jquery-2.1.4.min.js",
+				"content.js"
 			]
 		}
 	],

@@ -12,13 +12,15 @@ app.set('view engine', 'ejs');
 
 app.use(express.static(__dirname + '/public'));
 
+exec('screencapture -R106,157,640,360 ./public/screenshot.jpeg', function (error, stdout, stderr){
+});
 fs.watchFile('./public/screenshot.jpeg', function(curr, prev) {
   console.log('the current mtime is: ' + curr.mtime);
   console.log('the previous mtime was: ' + prev.mtime);
-  // setTimeout(function() {
-  //   exec('screencapture -R106,157,640,360 ./public/screenshot.jpeg', function (error, stdout, stderr){
-  //   });
-  // }, 2000);
+  setTimeout(function() {
+    exec('screencapture -R106,157,640,360 ./public/screenshot.jpeg', function (error, stdout, stderr){
+    });
+  }, 2000);
 });
 
 var detectFaceParams = function(payload, content) {
@@ -45,20 +47,29 @@ var detectFaceParams = function(payload, content) {
         return;
       }
       console.log("got data from Project Oxford");
-      // fs.createWriteStream('apiData.json').write(JSON.stringify(body, null, 2));
+      // fs.createWriteStream('views/data.json').write(JSON.stringify(body, null, 2));
   	}
   }
 }
 
 app.get('/', function(req, res) {
-  // capture youtube screen
-  exec('screencapture -R106,157,640,360 ./public/screenshot.jpeg', function (error, stdout, stderr){
-  });
-  source = fs.createReadStream('./test.png');
+  var source = fs.createReadStream('./public/screenshot.jpeg');
   var params = detectFaceParams('', 'application/octet-stream');
   // source.pipe(request.post('http://localhost:1337/image')); //oxford req
-  source.pipe(request.post(params.options, params.callback));
-  res.render('index.ejs');
+  var cb = function(error, response, body) {
+    console.log("got data from project oxford");
+    console.log(body);
+    res.send(JSON.stringify(body,null, 2));
+    // var stream = fs.createWriteStream('views/data.ejs');
+    // stream.write(JSON.stringify(body, null, 2));
+    // stream.end("ok!");
+    // stream.on("finish", function() {
+    //   res.send('data.ejs');
+    // });
+  };
+  console.log("POSTING to project oxford");
+  source.pipe(request.post(params.options, cb));
+  // res.render('index.ejs');
 });
 
 app.post('/image', function(req, res) {
