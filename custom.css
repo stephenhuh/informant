@@ -46,6 +46,10 @@ h3{
 	text-align:right;
 }
 
+#right-message {
+	margin-top: -1px;
+}
+
 .happy{
 	background-color:#FF9900;
 }

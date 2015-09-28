@@ -11,7 +11,7 @@ var wit = require('node-wit');
 var _ = require('lodash');
 var ACCESS_TOKEN = "JJ6C6JDV5B65NDEVVXDJIOLE5AC5SUOX";
 var VIDEO_URL = "https://www.youtube.com/watch?v=FRKVQcbIByo";
-var WIT_LIMIT = 500;
+var WIT_LIMIT = 5;
 
 app.set('view engine', 'ejs');
 
@@ -95,7 +95,7 @@ var analyze = function() {
           console.log("Response from Wit for audio stream: ");
           if (err) console.log("Error: ", err);
           console.log(JSON.stringify(res, null, " "));
-          infoQueue.push(JSON.stringifiy(res, null, " "));
+          infoQueue.push(JSON.stringify(res, null, " "));
       });
     });
   });

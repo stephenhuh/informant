@@ -12,6 +12,7 @@
   chrome.runtime.onConnect.addListener(function(port) {
     port.postMessage("connected");
     var pollingInterval = setInterval(function() {
+      console.log("polling for wit");
       $.get('http://localhost:1337/informant')
       .success(function(resp){
         port.postMessage({info: resp});
