@@ -64,17 +64,13 @@ app.get('/', function(req, res) {
     console.log("got data from project oxford");
     console.log(body);
     res.send(JSON.stringify(body,null, 2));
-    // var stream = fs.createWriteStream('views/data.ejs');
-    // stream.write(JSON.stringify(body, null, 2));
-    // stream.end("ok!");
-    // stream.on("finish", function() {
-    //   res.send('data.ejs');
-    // });
   };
   console.log("POSTING to project oxford");
   // var dummyData = fs.createReadStream('./apiDataMinimal.json');
   // dummyData.pipe(res);
+
   source.pipe(request.post(params.options, cb));
+
   // res.render('index.ejs');
 });
 

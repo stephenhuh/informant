@@ -7,9 +7,9 @@
 	],
 	"background": {
     "scripts": [
-			"lodash.min.js",
-			"jquery-2.1.4.min.js",
-			"background.js"
+			"lib/lodash.min.js",
+			"lib/jquery-2.1.4.min.js",
+			"scripts/background.js"
 		],
     "persistent": false
 	},
@@ -20,14 +20,15 @@
 				"https://www.youtube.com/*"
 			],
 			"js": [
-				"lodash.min.js",
-				"jquery-2.1.4.min.js",
-				"content.js"
+				"lib/lodash.min.js",
+				"lib/jquery-2.1.4.min.js",
+				"scripts/content.js"
+			],
+			"css": [
+				"css/custom.css",
+				"lib/bootstrap-theme.min.css"
 			]
 		}
-	],
-	"web_accessible_resources": [
-      "custom.css", "bootstrap-theme.min.css"
 	],
 	"manifest_version": 2
 }

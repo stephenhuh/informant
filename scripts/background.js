@@ -1,6 +1,6 @@
 (function(window, $, _){
   var timeout,interval;
-  $.get('http://localhost:1337/dl');
+  // $.get('http://localhost:1337/dl');
   function unPoll() {
     if (!_.isUndefined(timeout)) {
       clearTimeout(timeout);
@@ -13,13 +13,13 @@
     port.postMessage("connected");
     var pollingInterval = setInterval(function() {
       console.log("polling for wit");
-      $.get('http://localhost:1337/informant')
-      .success(function(resp){
-        port.postMessage({info: resp});
-      })
-      .error(function(resp){
-        port.postMessage(resp);
-      });
+      // $.get('http://localhost:1337/informant')
+      // .success(function(resp){
+      //   port.postMessage({info: resp});
+      // })
+      // .error(function(resp){
+      //   port.postMessage(resp);
+      // });
     }, 5000);
     port.onMessage.addListener(function(msg) {
       // do some stuff here
